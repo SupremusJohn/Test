@@ -1,24 +1,29 @@
 FROM node:lts-buster
 
+# Permet de recevoir une variable externe au build
+ARG GITHUB_TOKEN
+
 RUN apt-get update && \
   apt-get install -y \
   ffmpeg \
   imagemagick \
-  webp && \
+  webp \
+  git && \
   apt-get upgrade -y && \
   npm i pm2 -g && \
   rm -rf /var/lib/apt/lists/*
-  
-RUN git clone https://github.com/SupremusJohn/SP_ZK
-WORKDIR /root/Supremus_MD/
 
+# Cloner en utilisant le token pour accéder au dépôt privé
+RUN git clone https://${GITHUB_TOKEN}@github.com/kurameshinatsuki/Supremus_MD Supremus_MD
 
-COPY package.json .
-RUN npm install pm2 -g
+# Entrer dans le dossier cloné
+WORKDIR /root/Supremus_MD
+
+# Installer les dépendances du projet
 RUN npm install --legacy-peer-deps
-
-COPY . .
 
 EXPOSE 10000
 
 CMD ["node", "index.js"]
+# Ou, si tu préfères une gestion avec pm2 :
+# CMD ["pm2-runtime", "index.js"]
