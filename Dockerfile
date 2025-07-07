@@ -18,4 +18,4 @@ RUN npm install pm2 -g
 
 EXPOSE 10000
 
-CMD ["node", "index.js"]
+CMD ["node"]
