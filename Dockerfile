@@ -14,7 +14,6 @@ WORKDIR /root/Supremus_MD/
 
 
 RUN npm install pm2 -g
-RUN npm install --legacy-peer-deps
 
 
 EXPOSE 10000
