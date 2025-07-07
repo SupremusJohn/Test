@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Clone repository and verify contents
-RUN git clone https://github.com/kurameshinatsuki/Supremus_MD . && \
+RUN git clone https://${GITHUB_TOKEN}@github.com/kurameshinatsuki/Supremus_MD . && \
     ls -la
 
 # Install dependencies (only if package.json exists)
