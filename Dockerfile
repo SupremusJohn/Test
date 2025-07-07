@@ -1,6 +1,6 @@
 FROM node:20-slim
 
-# Installer les dépendances système
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
   ffmpeg \
   imagemagick \
@@ -9,19 +9,22 @@ RUN apt-get update && apt-get install -y \
   apt-get upgrade -y && \
   rm -rf /var/lib/apt/lists/*
 
-# Créer le dossier de travail (facultatif, utile pour clarté)
-WORKDIR /root
+# Create and set working directory
+WORKDIR /app
 
-# Cloner le vrai bot
-RUN git clone https://github.com/kurameshinatsuki/Supremus_MD /Supremus_MD
+# Clone repository and verify contents
+RUN git clone https://github.com/kurameshinatsuki/Supremus_MD . && \
+    ls -la
 
-WORKDIR /root/Supremus_MD
+# Install dependencies (only if package.json exists)
+RUN if [ -f package.json ]; then \
+      npm install --legacy-peer-deps; \
+    else \
+      echo "ERROR: package.json not found!" && exit 1; \
+    fi
 
-# Installer les dépendances du vrai projet
-RUN npm install --legacy-peer-deps
-
-# Exposer le port utilisé par ton bot
+# Expose port
 EXPOSE 10000
 
-# Lancer le bot (adaptable si tu utilises PM2 ou autre)
+# Start command
 CMD ["node", "index.js"]
