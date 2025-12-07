@@ -1,0 +1,53 @@
+name: Docker CI - Leurre (Public)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+env:
+  PREFIXE: "$"
+  NOM_OWNER: "💓 Mon Roi 💕"
+  NUMERO_OWNER: "22503731509"
+  MODE: "public"
+  SESSION_ID: "Ovl-MD_zGn89scN_SESSION-ID"
+  STICKER_PACK_NAME: "Supremus"
+  STICKER_AUTHOR_NAME: "Kaguya"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: |
+        docker build \
+          -t bot-leurre:latest .
+
+    - name: Create .env file
+      run: |
+        cat > .env << EOF
+PREFIXE=${{ env.PREFIXE }}
+NOM_OWNER=${{ env.NOM_OWNER }}
+NUMERO_OWNER=${{ env.NUMERO_OWNER }}
+MODE=${{ env.MODE }}
+SESSION_ID=${{ env.SESSION_ID }}
+STICKER_PACK_NAME=${{ env.STICKER_PACK_NAME }}
+STICKER_AUTHOR_NAME=${{ env.STICKER_AUTHOR_NAME }}
+EOF
+
+    - name: Run bot container with .env file
+      run: |
+        timeout 14520s docker run --rm \
+          -e NODE_ENV=production \
+          --env-file .env \
+          bot-leurre:latest
