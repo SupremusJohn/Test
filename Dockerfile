@@ -1,24 +1,16 @@
-FROM node:20-slim
+FROM node:20-bullseye-slim
 
-# Install system deps
 RUN apt-get update && apt-get install -y \
-  ffmpeg imagemagick webp git && \
-  apt-get upgrade -y && \
-  rm -rf /var/lib/apt/lists/*
+    ffmpeg \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+RUN git clone https://github.com/Ainz-devs/OVL-MD-V2.git /ovl_bot
 
-# Clone with build-arg (Solution 1)
-ARG GITHUB_TOKEN
-RUN git clone https://${GITHUB_TOKEN}@github.com/kurameshinatsuki/Supremus_MD . && \
-    ls -la
+WORKDIR /ovl_bot
 
-# Install dependencies
-RUN if [ -f package.json ]; then \
-      npm install --legacy-peer-deps; \
-    else \
-      echo "ERROR: package.json not found!" && exit 1; \
-    fi
+RUN npm install
 
-EXPOSE 10000
-CMD ["node", "index.js"]
+EXPOSE 8000
+
+CMD ["npm", "start"]
